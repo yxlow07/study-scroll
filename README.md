@@ -25,7 +25,7 @@ I’ve experienced this myself, and I thought, wouldn’t it be perfect to have 
 
 <br>
 ## For Developers - Folder Structure
-```
+<pre>
 lib/
 ├── main.dart                                  // Application entry point
 |
@@ -211,4 +211,4 @@ lib/
         ├── error_display.dart
         ├── custom_button.dart
         └── message_box.dart                   // Custom dialog for messages
-```
+</pre>
