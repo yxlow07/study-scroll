@@ -7,20 +7,16 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     primaryColor: AppColors.primaryColor,
     brightness: Brightness.light,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primaryColor,
+    colorScheme: ColorScheme.light(
       primary: AppColors.primaryColor,
-      brightness: Brightness.light,
+      secondary: AppColors.secondaryColor,
+      tertiary: AppColors.tertiaryColor,
+      surface: AppColors.surface,
+      inverseSurface: AppColors.darkColor,
     ),
+    scaffoldBackgroundColor: AppColors.surface,
   );
 
-  static ThemeData darkTheme = ThemeData(
-    primaryColor: AppColors.primaryColor,
-    brightness: Brightness.dark,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primaryColor,
-      primary: AppColors.primaryColor,
-      brightness: Brightness.dark,
-    ),
-  );
+  // TODO: Implement dark theme
+  static ThemeData darkTheme = ThemeData(primaryColor: AppColors.primaryColor, brightness: Brightness.dark);
 }
