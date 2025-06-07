@@ -1,21 +1,32 @@
 import 'package:study_scroll/domain/entities/student.dart';
 
-abstract class AuthState {}
+enum AuthMode { login, signUp }
 
-class AuthInitial extends AuthState {}
+abstract class AuthState {
+  final AuthMode mode;
+  const AuthState(this.mode);
+}
 
-class AuthLoading extends AuthState {}
+class AuthInitial extends AuthState {
+  AuthInitial({AuthMode initialMode = AuthMode.login}) : super(initialMode);
+}
+
+class AuthLoading extends AuthState {
+  AuthLoading({required AuthMode currentMode}) : super(currentMode);
+}
 
 class AuthSignedIn extends AuthState {
   final Student student;
 
-  AuthSignedIn(this.student);
+  AuthSignedIn(this.student) : super(AuthMode.login);
 }
 
-class AuthSignedOut extends AuthState {}
+class AuthSignedOut extends AuthState {
+  AuthSignedOut({AuthMode currentMode = AuthMode.login}) : super(currentMode);
+}
 
 class AuthError extends AuthState {
   final String message;
 
-  AuthError(this.message);
+  AuthError(this.message, {required AuthMode currentMode}) : super(currentMode);
 }

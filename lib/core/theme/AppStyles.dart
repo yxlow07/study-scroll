@@ -4,7 +4,9 @@ import 'AppColors.dart';
 class AppStyles {
   static const TextStyle title = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textColor);
 
-  static const TextStyle subtitle = TextStyle(
+  static const TextStyle subtitle = TextStyle(fontSize: 18, color: AppColors.textLightColor);
+
+  static const TextStyle subtitleBold = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
     color: AppColors.textLightColor,

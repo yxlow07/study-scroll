@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:study_scroll/domain/entities/student.dart';
 import 'package:study_scroll/domain/repositories/auth_repo.dart';
@@ -6,6 +7,8 @@ import 'package:study_scroll/domain/repositories/auth_repo.dart';
 
 class FirebaseAuthRepository implements AuthRepository {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
   @override
   Future<Student?> getCurrentUser() {
     final firebaseUser = firebaseAuth.currentUser;
@@ -45,7 +48,9 @@ class FirebaseAuthRepository implements AuthRepository {
         email: email,
         password: password,
       );
-      Student? student = Student(uid: userCredential.user!.uid, name: name, email: email);
+      Student student = Student(uid: userCredential.user!.uid, name: name, email: email);
+
+      await firebaseFirestore.collection('students').doc(userCredential.user!.uid).set(student.toJson());
       return student;
     } catch (e) {
       throw Exception('Failed to sign up: $e');

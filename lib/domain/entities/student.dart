@@ -16,7 +16,7 @@ class Student {
   }
 
   // Method to convert User to a map
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {'uid': uid, 'name': name, 'email': email};
   }
 }
