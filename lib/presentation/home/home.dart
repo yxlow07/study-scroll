@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:study_scroll/core/routes/app_routes.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 import 'package:study_scroll/presentation/profile/profile.dart';
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.logout),
             onPressed: () {
               authCubit.signOut();
+              context.go(AppRoutes.auth);
               print(authCubit.state);
             },
           ),

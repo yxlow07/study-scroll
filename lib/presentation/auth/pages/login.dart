@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:study_scroll/core/constants/images.dart';
 import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 import 'package:study_scroll/presentation/widgets/form_button.dart';
