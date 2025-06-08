@@ -5,6 +5,7 @@ import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 import 'package:study_scroll/presentation/widgets/form_button.dart';
 import 'package:study_scroll/presentation/widgets/input_field.dart';
+import 'package:study_scroll/presentation/widgets/logo.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function() toggleAuthMode;
@@ -48,10 +49,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(50.0),
-                  child: Image(image: AssetImage(images.logo), width: 100, height: 100),
-                ),
+                Logo(),
                 const SizedBox(height: 20),
                 const Text('Login', style: AppStyles.title),
                 const SizedBox(height: 10),
