@@ -3,18 +3,36 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:study_scroll/core/routes/app_routes.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
-import 'package:study_scroll/presentation/profile/profile.dart';
-import 'package:study_scroll/presentation/widgets/logo.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Widget child;
+  const HomePage({super.key, required this.child});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
+  int _selectedIndex = 0;
+
+  void _onNavbarTap(int index, BuildContext context) {
+    _selectedIndex = index;
+    switch (index) {
+      case 0:
+        context.go(AppRoutes.home);
+        break;
+      case 1:
+        context.push(AppRoutes.leaderboard);
+        break;
+      case 2:
+        context.push(AppRoutes.quiz);
+        break;
+      case 3:
+        context.push(AppRoutes.profile);
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
@@ -22,33 +40,20 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Study Scroll'),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              authCubit.signOut();
-              context.go(AppRoutes.auth);
-              print(authCubit.state);
-            },
-          ),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () => authCubit.signOut())],
       ),
-      body: const Center(child: Text("Welcome!")),
+      body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        currentIndex: _selectedIndex,
+        onTap: (index) => _onNavbarTap(index, context),
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         items: [
-          BottomNavigationBarItem(icon: const Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: const Icon(Icons.leaderboard), label: ''),
-          BottomNavigationBarItem(icon: const Icon(Icons.quiz), label: ''),
-          BottomNavigationBarItem(icon: const Icon(Icons.person), label: ''),
+          BottomNavigationBarItem(icon: const Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: const Icon(Icons.leaderboard), label: 'Leaderboard'),
+          BottomNavigationBarItem(icon: const Icon(Icons.quiz), label: 'Quiz'),
+          BottomNavigationBarItem(icon: const Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

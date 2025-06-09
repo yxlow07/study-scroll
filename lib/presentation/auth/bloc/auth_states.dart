@@ -5,6 +5,8 @@ enum AuthMode { login, signUp }
 abstract class AuthState {
   final AuthMode mode;
   const AuthState(this.mode);
+
+  get student => null;
 }
 
 class AuthInitial extends AuthState {

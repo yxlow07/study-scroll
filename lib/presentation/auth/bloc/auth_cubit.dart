@@ -43,12 +43,8 @@ class AuthCubit extends Cubit<AuthState> {
     final currentMode = state.mode;
     emit(AuthLoading(currentMode: currentMode));
     try {
-      _student = await authRepository.signInWithEmailAndPassword(email, password);
-      if (_student != null) {
-        emit(AuthSignedIn(_student!));
-      } else {
-        emit(AuthSignedOut());
-      }
+      final student = await authRepository.signInWithEmailAndPassword(email, password);
+      emit(AuthSignedIn(student));
     } catch (e) {
       emit(AuthError('Failed to sign in: $e', currentMode: currentMode));
     }

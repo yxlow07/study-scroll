@@ -11,24 +11,29 @@ class AuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
-      builder: (context, state) {
-        // The state.mode will determine which view to show
-        // This assumes your AuthState always has a 'mode'
-        if (state.mode == AuthMode.login) {
-          return LoginPage(
-            toggleAuthMode: () {
-              context.read<AuthCubit>().toggleAuthMode();
-            },
-          );
-        } else {
-          return RegisterPage(
-            toggleAuthMode: () {
-              context.read<AuthCubit>().toggleAuthMode();
-            },
-          );
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
+      child: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          if (state.mode == AuthMode.login) {
+            return LoginPage(
+              toggleAuthMode: () {
+                context.read<AuthCubit>().toggleAuthMode();
+              },
+            );
+          } else {
+            return RegisterPage(
+              toggleAuthMode: () {
+                context.read<AuthCubit>().toggleAuthMode();
+              },
+            );
+          }
+        },
+      ),
     );
   }
 }

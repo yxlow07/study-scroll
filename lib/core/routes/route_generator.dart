@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:study_scroll/core/routes/app_routes.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
@@ -9,48 +8,6 @@ import 'package:study_scroll/presentation/auth/bloc/auth_states.dart';
 import 'package:study_scroll/presentation/auth/pages/auth.dart';
 import 'package:study_scroll/presentation/home/home.dart';
 import 'package:study_scroll/presentation/profile/profile.dart';
-
-// final goRouter = GoRouter(
-//   initialLocation: AppRoutes.home,
-//   redirect: (context, state) {
-//     final authCubit = context.read<AuthCubit>();
-//     final authState = authCubit.state;
-//
-//     if (authState is AuthSignedOut || authState is AuthError || authState is AuthInitial) {
-//       return AppRoutes.auth;
-//     }
-//
-//     // Allow authenticated users to proceed
-//     return null;
-//   },
-//   routes: [
-//     GoRoute(
-//       path: AppRoutes.auth,
-//       builder:
-//           (context, state) => BlocListener<AuthCubit, AuthState>(
-//             listener: (context, state) {
-//               if (state is AuthError || state is AuthSignedOut || state is AuthInitial) {
-//                 // Redirect to auth page if not authenticated
-//                 WidgetsBinding.instance.addPostFrameCallback((_) => GoRouter.of(context).go(AppRoutes.auth));
-//               } else if (state is AuthSignedIn) {
-//                 // Redirect to home page if authenticated
-//                 GoRouter.of(context).go(AppRoutes.home);
-//               }
-//             },
-//             child: AuthPage(),
-//           ),
-//     ),
-//     GoRoute(path: AppRoutes.home, builder: (context, state) => HomePage()),
-//     GoRoute(path: AppRoutes.profile, builder: (context, state) => const ProfilePage()),
-//     GoRoute(
-//       path: AppRoutes.leaderboard,
-//       builder: (context, state) => const Center(child: Text('Leaderboard Page (Route)')),
-//     ),
-//     GoRoute(path: AppRoutes.quiz, builder: (context, state) => const Center(child: Text('Quiz Page (Route)'))),
-//     // Add your other routes here
-//   ],
-//   errorBuilder: (context, state) => Scaffold(body: Center(child: CircularProgressIndicator())),
-// );
 
 GoRouter createAppRouter(AuthCubit authCubit) {
   return GoRouter(
@@ -66,9 +23,6 @@ GoRouter createAppRouter(AuthCubit authCubit) {
         if (!onAuthFlow) {
           return AppRoutes.auth;
         }
-        if (currentState is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(currentState.message)));
-        }
       }
       // If the user is signed in
       else if (currentState is AuthSignedIn) {
@@ -81,15 +35,36 @@ GoRouter createAppRouter(AuthCubit authCubit) {
       // No redirect needed, allow navigation to the intended route
       return null;
     },
-    routes: [
+    routes: <RouteBase>[
       GoRoute(path: AppRoutes.auth, builder: (context, state) => AuthPage()),
-      GoRoute(path: AppRoutes.home, builder: (context, state) => HomePage()),
-      GoRoute(path: AppRoutes.profile, builder: (context, state) => const ProfilePage()),
-      GoRoute(
-        path: AppRoutes.leaderboard,
-        builder: (context, state) => const Center(child: Text('Leaderboard Page (Route)')),
+      ShellRoute(
+        navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'shell'),
+        builder: (BuildContext context, GoRouterState state, Widget child) => HomePage(child: child),
+        routes: <RouteBase>[
+          GoRoute(
+            path: AppRoutes.home,
+            pageBuilder: (context, state) => NoTransitionPage(child: const Text("Hello World"), key: state.pageKey),
+          ),
+          GoRoute(
+            path: AppRoutes.profile,
+            pageBuilder:
+                (context, state) =>
+                    NoTransitionPage(child: ProfilePage(uid: authCubit.student!.uid), key: state.pageKey),
+          ),
+          GoRoute(
+            path: AppRoutes.leaderboard,
+            pageBuilder:
+                (context, state) =>
+                    NoTransitionPage(child: Center(child: Text('Leaderboard Page (Route)')), key: state.pageKey),
+          ),
+          GoRoute(
+            path: AppRoutes.quiz,
+            pageBuilder:
+                (context, state) =>
+                    NoTransitionPage(child: Center(child: Text('Quiz Page (Route)')), key: state.pageKey),
+          ),
+        ],
       ),
-      GoRoute(path: AppRoutes.quiz, builder: (context, state) => const Center(child: Text('Quiz Page (Route)'))),
     ],
     errorBuilder: (context, state) {
       print("GoRouter Error: ${state.error}");

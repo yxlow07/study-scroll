@@ -1,6 +1,6 @@
 class Student {
   final String uid;
-  final String name;
+  late final String name;
   final String email;
 
   Student({required this.uid, required this.name, required this.email});
