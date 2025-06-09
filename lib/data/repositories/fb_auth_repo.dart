@@ -10,10 +10,11 @@ class FirebaseAuthRepository implements AuthRepository {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   @override
-  Future<Student?> getCurrentUser() {
+  Future<Student?> getCurrentUser() async {
     final firebaseUser = firebaseAuth.currentUser;
     if (firebaseUser != null) {
-      return Future.value(Student(uid: firebaseUser.uid, name: '', email: firebaseUser.email!));
+      DocumentSnapshot doc = await firebaseFirestore.collection('students').doc(firebaseUser.uid).get();
+      return Future.value(Student(uid: firebaseUser.uid, name: doc['name'], email: firebaseUser.email!));
     } else {
       return Future.value(null);
     }
@@ -34,7 +35,9 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<Student> signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      Student? student = Student(uid: userCredential.user!.uid, name: '', email: email);
+      DocumentSnapshot doc = await firebaseFirestore.collection('students').doc(userCredential.user!.uid).get();
+
+      Student? student = Student(uid: userCredential.user!.uid, name: doc['name'], email: email);
       return student;
     } catch (e) {
       throw Exception('Failed to sign in: $e');
