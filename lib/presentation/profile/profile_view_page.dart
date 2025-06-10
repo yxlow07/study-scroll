@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:study_scroll/core/routes/app_routes.dart';
+import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
 
@@ -52,7 +55,7 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top section: Profile Picture and Stats
+                  SizedBox(height: 20),
                   Row(
                     children: [
                       // Circular avatar for the profile picture.
@@ -60,32 +63,46 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                         radius: 45, // Smaller radius to fit stats beside it
                         backgroundImage:
                             profile.profilePictureUrl.isNotEmpty ? NetworkImage(profile.profilePictureUrl) : null,
-                        backgroundColor: profile.profilePictureUrl.isEmpty ? Colors.grey[400] : null,
                         child: profile.profilePictureUrl.isEmpty ? const Icon(Icons.person, size: 45) : null,
                       ),
                       const SizedBox(width: 20),
                       // Posts, Followers, Following Stats
                       Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        child: Column(
                           children: [
-                            _buildStatColumn('0', 'Posts'),
-                            _buildStatColumn('0', 'Followers'),
-                            _buildStatColumn('0', 'Following'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _buildStatColumn('0', 'Posts'),
+                                _buildStatColumn('0', 'Followers'),
+                                _buildStatColumn('0', 'Following'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () => context.push(AppRoutes.editProfile),
+                                    style: AppStyles.outlinedButtonStyle,
+                                    child: const Text('Edit Profile'),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  // Name and Bio
+                  const SizedBox(height: 20),
                   Text(
                     profile.name.isNotEmpty ? profile.name : '-',
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Text(profile.bio.isNotEmpty ? profile.bio : '', style: const TextStyle(fontSize: 14)),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -95,7 +112,7 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                             ? [Text('No subjects selected.', style: TextStyle(color: Colors.grey[600]))]
                             : subjectChips,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 4),
                   // Follow and Message Buttons (For other users)
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

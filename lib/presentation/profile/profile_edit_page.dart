@@ -2,6 +2,8 @@ import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/data/datasource/a_level_subjects.dart';
 import 'package:study_scroll/domain/entities/profile.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
@@ -161,29 +163,41 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       runSpacing: 8,
                       children: [
                         ...subjectChips,
-                        ElevatedButton.icon(
+                        OutlinedButton.icon(
                           onPressed: () => _showSubjectSelectionDialog(context),
                           icon: const Icon(Icons.add),
                           label: const Text('Add Subject'),
+                          style: AppStyles.outlinedButtonStyle,
                         ),
                       ],
                     ),
                     SizedBox(height: 40),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            await profileCubit.updateProfile(
-                              widget.uid,
-                              _nameController.text,
-                              profile.email,
-                              _bioController.text,
-                              profile.profilePictureUrl,
-                              selectedSubjects,
-                            );
-                          },
-                          child: const Text("Update Profile"),
+                        Expanded(
+                          child: OutlinedButton(
+                            style: AppStyles.outlinedButtonStyle,
+                            onPressed: () async {
+                              await profileCubit.updateProfile(
+                                widget.uid,
+                                _nameController.text,
+                                profile.email,
+                                _bioController.text,
+                                profile.profilePictureUrl,
+                                selectedSubjects,
+                              );
+                            },
+                            child: const Text("Update Profile"),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => context.pop(),
+                            style: AppStyles.outlinedButtonStyle,
+                            child: const Text("Go Back"),
+                          ),
                         ),
                       ],
                     ),
