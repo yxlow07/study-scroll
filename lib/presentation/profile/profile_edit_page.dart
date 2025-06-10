@@ -4,25 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:study_scroll/data/datasource/a_level_subjects.dart';
 import 'package:study_scroll/domain/entities/profile.dart';
-import 'package:study_scroll/domain/entities/student.dart';
-import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfileEditPage extends StatefulWidget {
   final String uid;
-  const ProfilePage({super.key, required this.uid});
+  const ProfileEditPage({super.key, required this.uid});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfileEditPage> createState() => _ProfileEditPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  late final authState = context.read<AuthCubit>().state;
+class _ProfileEditPageState extends State<ProfileEditPage> {
   late final profileCubit = context.read<ProfileCubit>();
   late TextEditingController _nameController;
   late TextEditingController _bioController;
-  late Student? student = authState.student;
 
   List<String> availableSubjects = cambridge_official_subject_list;
   List<String> selectedSubjects = [];
@@ -172,26 +168,31 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await profileCubit.updateProfile(
-                          widget.uid,
-                          _nameController.text,
-                          profile.email,
-                          _bioController.text,
-                          profile.profilePictureUrl,
-                          selectedSubjects,
-                        );
-                      },
-                      child: const Text("Update Profile"),
+                    SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            await profileCubit.updateProfile(
+                              widget.uid,
+                              _nameController.text,
+                              profile.email,
+                              _bioController.text,
+                              profile.profilePictureUrl,
+                              selectedSubjects,
+                            );
+                          },
+                          child: const Text("Update Profile"),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             );
           }
-          return Center(child: Text('Loading...'));
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );

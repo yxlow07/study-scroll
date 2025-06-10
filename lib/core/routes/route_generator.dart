@@ -7,7 +7,8 @@ import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_states.dart';
 import 'package:study_scroll/presentation/auth/pages/auth.dart';
 import 'package:study_scroll/presentation/home/home.dart';
-import 'package:study_scroll/presentation/profile/profile.dart';
+import 'package:study_scroll/presentation/profile/profile_edit_page.dart';
+import 'package:study_scroll/presentation/profile/profile_view_page.dart';
 
 GoRouter createAppRouter(AuthCubit authCubit) {
   return GoRouter(
@@ -49,7 +50,13 @@ GoRouter createAppRouter(AuthCubit authCubit) {
             path: AppRoutes.profile,
             pageBuilder:
                 (context, state) =>
-                    NoTransitionPage(child: ProfilePage(uid: authCubit.student!.uid), key: state.pageKey),
+                    NoTransitionPage(child: ProfileViewPage(uid: authCubit.student!.uid), key: state.pageKey),
+          ),
+          GoRoute(
+            path: AppRoutes.editProfile,
+            pageBuilder:
+                (context, state) =>
+                    NoTransitionPage(child: ProfileEditPage(uid: authCubit.student!.uid), key: state.pageKey),
           ),
           GoRoute(
             path: AppRoutes.leaderboard,
