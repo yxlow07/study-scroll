@@ -1,4 +1,4 @@
-import '../../../domain/entities/profile.dart';
+import 'package:study_scroll/domain/entities/profile.dart';
 
 abstract class ProfileState {}
 

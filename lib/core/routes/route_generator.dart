@@ -8,18 +8,30 @@ import 'package:study_scroll/presentation/auth/bloc/auth_states.dart';
 import 'package:study_scroll/presentation/auth/pages/auth.dart';
 import 'package:study_scroll/presentation/home/home.dart';
 import 'package:study_scroll/presentation/profile/profile_edit_page.dart';
+import 'package:study_scroll/presentation/profile/profile_edit_picture_page.dart';
 import 'package:study_scroll/presentation/profile/profile_view_page.dart';
 
+GoRouter?
+_appRouter; // Global variable to hold the router instance to prevent the router from being reinstantiated every reload
+
 GoRouter createAppRouter(AuthCubit authCubit) {
-  return GoRouter(
+  if (_appRouter != null) {
+    return _appRouter!;
+  }
+
+  _appRouter = GoRouter(
     initialLocation: AppRoutes.home,
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
     redirect: (BuildContext context, GoRouterState state) {
-      final currentState = authCubit.state; // Get the current state directly from the cubit instance
+      final currentState =
+          authCubit
+              .state; // Get the current state directly from the cubit instance
       final onAuthFlow = state.matchedLocation == AppRoutes.auth;
 
       // If the user is signed out, or in an error state, or initial state
-      if (currentState is AuthSignedOut || currentState is AuthError || currentState is AuthInitial) {
+      if (currentState is AuthSignedOut ||
+          currentState is AuthError ||
+          currentState is AuthInitial) {
         // If they are not already on an authentication page, redirect them to the auth page
         if (!onAuthFlow) {
           return AppRoutes.auth;
@@ -40,44 +52,68 @@ GoRouter createAppRouter(AuthCubit authCubit) {
       GoRoute(path: AppRoutes.auth, builder: (context, state) => AuthPage()),
       ShellRoute(
         navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'shell'),
-        builder: (BuildContext context, GoRouterState state, Widget child) => HomePage(child: child),
+        builder:
+            (BuildContext context, GoRouterState state, Widget child) =>
+                HomePage(child: child),
         routes: <RouteBase>[
           GoRoute(
             path: AppRoutes.home,
-            pageBuilder: (context, state) => NoTransitionPage(child: const Text("Hello World"), key: state.pageKey),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  child: const Center(child: Text("Hello World")),
+                  key: state.pageKey,
+                ),
           ),
           GoRoute(
             path: AppRoutes.profile,
             pageBuilder:
-                (context, state) =>
-                    NoTransitionPage(child: ProfileViewPage(uid: authCubit.student!.uid), key: state.pageKey),
+                (context, state) => NoTransitionPage(
+                  child: ProfileViewPage(uid: authCubit.student!.uid),
+                  key: state.pageKey,
+                ),
           ),
           GoRoute(
             path: AppRoutes.editProfile,
             pageBuilder:
-                (context, state) =>
-                    NoTransitionPage(child: ProfileEditPage(uid: authCubit.student!.uid), key: state.pageKey),
+                (context, state) => NoTransitionPage(
+                  child: ProfileEditPage(uid: authCubit.student!.uid),
+                  key: state.pageKey,
+                ),
           ),
           GoRoute(
             path: AppRoutes.leaderboard,
             pageBuilder:
-                (context, state) =>
-                    NoTransitionPage(child: Center(child: Text('Leaderboard Page (Route)')), key: state.pageKey),
+                (context, state) => NoTransitionPage(
+                  child: Center(child: Text('Leaderboard Page (Route)')),
+                  key: state.pageKey,
+                ),
           ),
           GoRoute(
             path: AppRoutes.quiz,
             pageBuilder:
-                (context, state) =>
-                    NoTransitionPage(child: Center(child: Text('Quiz Page (Route)')), key: state.pageKey),
+                (context, state) => NoTransitionPage(
+                  child: Center(child: Text('Quiz Page (Route)')),
+                  key: state.pageKey,
+                ),
           ),
         ],
+      ),
+      GoRoute(
+        path: AppRoutes.editProfilePicture,
+        builder: (context, state) {
+          return ProfileEditPicturePage(uid: authCubit.student!.uid);
+        },
       ),
     ],
     errorBuilder: (context, state) {
       print("GoRouter Error: ${state.error}");
-      return Scaffold(body: Center(child: Text("Oops! Something went wrong. ${state.error}")));
+      return Scaffold(
+        body: Center(child: Text("Oops! Something went wrong. ${state.error}")),
+      );
     },
   );
+
+  return _appRouter!;
 }
 
 // Helper class for GoRouter to listen to a stream and notify changes

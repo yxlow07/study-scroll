@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:study_scroll/core/routes/app_routes.dart';
+import 'package:study_scroll/core/theme/AppColors.dart';
+import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,26 +37,23 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final authCubit = context.read<AuthCubit>();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Study Scroll'),
-        centerTitle: true,
-        actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () => authCubit.signOut())],
-      ),
-      body: widget.child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => _onNavbarTap(index, context),
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: [
-          BottomNavigationBarItem(icon: const Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: const Icon(Icons.leaderboard), label: 'Leaderboard'),
-          BottomNavigationBarItem(icon: const Icon(Icons.quiz), label: 'Quiz'),
-          BottomNavigationBarItem(icon: const Icon(Icons.person), label: 'Profile'),
-        ],
+    return Container(
+      color: AppColors.surface,
+      child: Scaffold(
+        body: SafeArea(child: widget.child),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) => _onNavbarTap(index, context),
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          items: [
+            BottomNavigationBarItem(icon: const Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: const Icon(Icons.leaderboard), label: 'Leaderboard'),
+            BottomNavigationBarItem(icon: const Icon(Icons.quiz), label: 'Quiz'),
+            BottomNavigationBarItem(icon: const Icon(Icons.person), label: 'Profile'),
+          ],
+        ),
       ),
     );
   }

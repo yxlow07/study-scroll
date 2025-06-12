@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:study_scroll/domain/entities/student.dart';
 import 'package:study_scroll/domain/repositories/auth_repo.dart';
 
-/// Implements auth methods with Firebase.
+// Implements auth methods with Firebase.
 
 class FirebaseAuthRepository implements AuthRepository {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;

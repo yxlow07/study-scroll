@@ -32,11 +32,26 @@ class FirebaseProfileRepo implements ProfileRepo {
   @override
   Future<Profile?> updateProfile(Profile profile) async {
     try {
-      await firestore.collection('students').doc(profile.uid).set(profile.toJson(), SetOptions(merge: true));
-      return profile; // Return the updated profile
+      await firestore
+          .collection('students')
+          .doc(profile.uid)
+          .set(profile.toJson(), SetOptions(merge: true));
+      return profile;
     } catch (e) {
       print(e);
       throw Exception('Failed to update profile');
+    }
+  }
+
+  @override
+  Future<void> updateProfilePicture(String uid, String fileId) async {
+    try {
+      await firestore.collection('students').doc(uid).update({
+        'profilePictureUrl': fileId,
+      });
+    } catch (e) {
+      print(e);
+      throw Exception('Failed to update profile picture');
     }
   }
 }

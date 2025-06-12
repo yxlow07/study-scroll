@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:study_scroll/core/routes/app_routes.dart';
 import 'package:study_scroll/core/theme/AppStyles.dart';
+import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
 
@@ -78,14 +79,23 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                                 _buildStatColumn('0', 'Following'),
                               ],
                             ),
+                            const SizedBox(height: 5),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Expanded(
                                   child: OutlinedButton(
                                     onPressed: () => context.push(AppRoutes.editProfile),
                                     style: AppStyles.outlinedButtonStyle,
                                     child: const Text('Edit Profile'),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () => context.read<AuthCubit>().signOut(),
+                                    style: AppStyles.outlinedButtonStyle,
+                                    child: const Text('Logout'),
                                   ),
                                 ),
                               ],
