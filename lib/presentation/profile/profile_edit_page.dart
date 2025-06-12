@@ -10,6 +10,7 @@ import 'package:study_scroll/data/datasource/a_level_subjects.dart';
 import 'package:study_scroll/domain/entities/profile.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
+import 'dart:convert';
 
 class ProfileEditPage extends StatefulWidget {
   final String uid;
@@ -74,6 +75,14 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     super.dispose();
   }
 
+  Future<String> _getProfilePictureUrl(String fileId) async {
+    final profile = context.read<ProfileCubit>();
+    if (profile.state is ProfileLoaded) {
+      return profile.backblazeApi.getDownloadUrl(fileId);
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProfileCubit, ProfileState>(
@@ -133,17 +142,37 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     Center(
                       child: Stack(
                         children: [
-                          CircleAvatar(
-                            radius: 60,
-                            backgroundImage:
+                          FutureBuilder<String>(
+                            future:
                                 profile.profilePictureUrl.isNotEmpty
-                                    ? NetworkImage(profile.profilePictureUrl)
-                                    : null,
-                            backgroundColor: AppColors.secondaryColor,
-                            child:
-                                profile.profilePictureUrl.isEmpty
-                                    ? const Icon(Icons.person, size: 60)
-                                    : null,
+                                    ? _getProfilePictureUrl(
+                                      profile.profilePictureUrl,
+                                    )
+                                    : Future.value(''),
+                            builder: (context, asyncSnapshot) {
+                              if (asyncSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircleAvatar(
+                                  radius: 45,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.grey[400],
+                                  ),
+                                );
+                              } else if (asyncSnapshot.hasData &&
+                                  asyncSnapshot.data!.isNotEmpty) {
+                                return CircleAvatar(
+                                  radius: 45,
+                                  backgroundImage: MemoryImage(
+                                    base64Decode(asyncSnapshot.data!),
+                                  ),
+                                );
+                              } else {
+                                return CircleAvatar(
+                                  radius: 45,
+                                  child: Icon(Icons.person, size: 45),
+                                );
+                              }
+                            },
                           ),
                           Positioned(
                             bottom: 0,
@@ -161,7 +190,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                     AppColors
                                         .primaryColor, // Customize the color
                                 child: const Icon(
-                                  Icons.add,
+                                  Icons.edit,
                                   size: 24,
                                   color:
                                       Colors.white, // Customize the icon color
