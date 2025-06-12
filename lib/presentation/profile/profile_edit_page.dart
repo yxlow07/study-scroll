@@ -140,65 +140,75 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
-                      child: Stack(
-                        children: [
-                          FutureBuilder<String>(
-                            future:
-                                profile.profilePictureUrl.isNotEmpty
-                                    ? _getProfilePictureUrl(
-                                      profile.profilePictureUrl,
-                                    )
-                                    : Future.value(''),
-                            builder: (context, asyncSnapshot) {
-                              if (asyncSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircleAvatar(
-                                  radius: 45,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.grey[400],
-                                  ),
-                                );
-                              } else if (asyncSnapshot.hasData &&
-                                  asyncSnapshot.data!.isNotEmpty) {
-                                return CircleAvatar(
-                                  radius: 45,
-                                  backgroundImage: MemoryImage(
-                                    base64Decode(asyncSnapshot.data!),
-                                  ),
-                                );
-                              } else {
-                                return CircleAvatar(
-                                  radius: 45,
-                                  child: Icon(Icons.person, size: 45),
-                                );
-                              }
-                            },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.grey[400]!,
+                            width: 3,
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                context.push(
-                                  AppRoutes.editProfilePicture,
-                                  extra: widget.uid,
-                                );
+                        ),
+                        child: Stack(
+                          children: [
+                            FutureBuilder<String>(
+                              future:
+                                  profile.profilePictureUrl.isNotEmpty
+                                      ? _getProfilePictureUrl(
+                                        profile.profilePictureUrl,
+                                      )
+                                      : Future.value(''),
+                              builder: (context, asyncSnapshot) {
+                                if (asyncSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return CircleAvatar(
+                                    radius: 45,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.grey[400],
+                                    ),
+                                  );
+                                } else if (asyncSnapshot.hasData &&
+                                    asyncSnapshot.data!.isNotEmpty) {
+                                  return CircleAvatar(
+                                    radius: 45,
+                                    backgroundImage: MemoryImage(
+                                      base64Decode(asyncSnapshot.data!),
+                                    ),
+                                  );
+                                } else {
+                                  return CircleAvatar(
+                                    radius: 45,
+                                    child: Icon(Icons.person, size: 45),
+                                  );
+                                }
                               },
-                              child: CircleAvatar(
-                                radius: 20,
-                                backgroundColor:
-                                    AppColors
-                                        .primaryColor, // Customize the color
-                                child: const Icon(
-                                  Icons.edit,
-                                  size: 24,
-                                  color:
-                                      Colors.white, // Customize the icon color
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  context.push(
+                                    AppRoutes.editProfilePicture,
+                                    extra: widget.uid,
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor:
+                                      AppColors
+                                          .primaryColor, // Customize the color
+                                  child: const Icon(
+                                    Icons.edit,
+                                    size: 24,
+                                    color:
+                                        Colors
+                                            .white, // Customize the icon color
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 20),

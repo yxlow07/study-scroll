@@ -75,37 +75,46 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                   Row(
                     children: [
                       // Circular avatar for the profile picture.
-                      FutureBuilder<String>(
-                        future:
-                            profile.profilePictureUrl.isNotEmpty
-                                ? _getProfilePictureUrl(
-                                  profile.profilePictureUrl,
-                                )
-                                : Future.value(''),
-                        builder: (context, asyncSnapshot) {
-                          if (asyncSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircleAvatar(
-                              radius: 45,
-                              child: CircularProgressIndicator(
-                                color: Colors.grey[400],
-                              ),
-                            );
-                          } else if (asyncSnapshot.hasData &&
-                              asyncSnapshot.data!.isNotEmpty) {
-                            return CircleAvatar(
-                              radius: 45,
-                              backgroundImage: MemoryImage(
-                                base64Decode(asyncSnapshot.data!),
-                              ),
-                            );
-                          } else {
-                            return CircleAvatar(
-                              radius: 45,
-                              child: Icon(Icons.person, size: 45),
-                            );
-                          }
-                        },
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.grey[400]!,
+                            width: 3,
+                          ),
+                        ),
+                        child: FutureBuilder<String>(
+                          future:
+                              profile.profilePictureUrl.isNotEmpty
+                                  ? _getProfilePictureUrl(
+                                    profile.profilePictureUrl,
+                                  )
+                                  : Future.value(''),
+                          builder: (context, asyncSnapshot) {
+                            if (asyncSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircleAvatar(
+                                radius: 45,
+                                child: CircularProgressIndicator(
+                                  color: Colors.grey[400],
+                                ),
+                              );
+                            } else if (asyncSnapshot.hasData &&
+                                asyncSnapshot.data!.isNotEmpty) {
+                              return CircleAvatar(
+                                radius: 45,
+                                backgroundImage: MemoryImage(
+                                  base64Decode(asyncSnapshot.data!),
+                                ),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                radius: 45,
+                                child: Icon(Icons.person, size: 45),
+                              );
+                            }
+                          },
+                        ),
                       ),
                       const SizedBox(width: 20),
                       // Posts, Followers, Following Stats
