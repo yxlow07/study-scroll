@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:study_scroll/data/datasource/backblaze_api.dart';
 import 'package:study_scroll/domain/entities/profile.dart';
 import 'package:study_scroll/domain/repositories/profile_repo.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepo profileRepo;
-  ProfileCubit({required this.profileRepo}) : super(ProfileInitial());
+  final BackBlazeApi backblazeApi;
+  ProfileCubit({required this.backblazeApi, required this.profileRepo}) : super(ProfileInitial());
 
   Future<void> loadProfile(String uid) async {
     try {

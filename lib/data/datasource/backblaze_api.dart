@@ -5,6 +5,7 @@ class BackBlazeApi {
   final String keyId;
   final String applicationKey;
   String? authorizationToken;
+  String? uploadAuthorizationToken;
   String? apiUrl;
 
   BackBlazeApi({required this.keyId, required this.applicationKey});
@@ -36,21 +37,31 @@ class BackBlazeApi {
 
     final response = await http.post(
       Uri.parse(url),
-      headers: {'Authorization': authorizationToken!, 'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': authorizationToken!,
+        'Content-Type': 'application/json',
+      },
       body: json.encode({'bucketId': bucketId}),
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      authorizationToken = data['authorizationToken'];
+      uploadAuthorizationToken = data['authorizationToken'];
       return data['uploadUrl'];
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
-      throw Exception(json.decode(response.body)['message'] ?? 'Failed to get upload URL');
+      throw Exception(
+        json.decode(response.body)['message'] ?? 'Failed to get upload URL',
+      );
     }
   }
 
-  Future<String?> uploadFile(String bucketId, String fileName, String mimeType, List<int> fileData) async {
+  Future<String?> uploadFile(
+    String bucketId,
+    String fileName,
+    String mimeType,
+    List<int> fileData,
+  ) async {
     if (authorizationToken == null || apiUrl == null) {
       await _authorize();
     }
@@ -61,7 +72,7 @@ class BackBlazeApi {
     final response = await http.post(
       Uri.parse(uploadUrl),
       headers: {
-        'Authorization': authorizationToken!,
+        'Authorization': uploadAuthorizationToken!,
         'X-Bz-File-Name': fileName,
         'Content-Type': mimeType,
         'X-Bz-Content-Sha1': 'do_not_verify',
@@ -84,5 +95,26 @@ class BackBlazeApi {
   @override
   String toString() {
     return 'BackBlazeApi(keyId: $keyId, applicationKey: $applicationKey, authorizationToken: $authorizationToken, apiUrl: $apiUrl)';
+  }
+
+  Future<String> getDownloadUrl(String fileId) async {
+    await _authorize();
+
+    String url = '$apiUrl/b2api/v2/b2_download_file_by_id?fileId=$fileId';
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': authorizationToken!},
+    );
+
+    print(url);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      String base64String = base64.encode(response.bodyBytes);
+      return base64String;
+    } else {
+      throw Exception('Failed to get download URL');
+    }
   }
 }

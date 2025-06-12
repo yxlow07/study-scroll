@@ -37,7 +37,7 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthCubit(authRepository: authRepo)..checkAuthStatus()),
-        BlocProvider(create: (context) => ProfileCubit(profileRepo: profileRepo)),
+        BlocProvider(create: (context) => ProfileCubit(profileRepo: profileRepo, backblazeApi: backblazeApi)),
         BlocProvider(create: (context) => ProfilePicCubit(backblazeApi: backblazeApi, profileRepo: profileRepo)),
       ],
       child: MyApp(),
