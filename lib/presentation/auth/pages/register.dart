@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:study_scroll/core/constants/images.dart';
 import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
+import 'package:study_scroll/presentation/auth/widgets/auth_appbar.dart';
+import 'package:study_scroll/presentation/widgets/alert.dart';
 import 'package:study_scroll/presentation/widgets/form_button.dart';
 import 'package:study_scroll/presentation/widgets/input_field.dart';
+import 'package:study_scroll/presentation/widgets/link.dart';
+import 'package:study_scroll/presentation/widgets/logo.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function() toggleAuthMode;
@@ -31,10 +34,10 @@ class _RegisterPageState extends State<RegisterPage> {
         final authCubit = context.read<AuthCubit>();
         authCubit.signUp(email, password, name);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+        Alert.alert(context, 'Passwords do not match');
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill in all fields')));
+      Alert.alert(context, 'Please fill in all the fields');
     }
   }
 
@@ -50,17 +53,17 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Center(
+      appBar: AuthAppBar(title: 'Register'),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: SingleChildScrollView(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(50.0),
-                  child: Image(image: AssetImage(images.logo), width: 100, height: 100),
-                ),
+                Logo(),
                 const SizedBox(height: 20),
                 Text('Create An Account', style: AppStyles.title(context)),
                 const SizedBox(height: 10),
@@ -78,10 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Already have an account? ", style: AppStyles.subtitle),
-                    GestureDetector(
-                      onTap: widget.toggleAuthMode,
-                      child: const Text("Login", style: AppStyles.subtitleBold),
-                    ),
+                    Link(onTap: widget.toggleAuthMode, child: Text("Login", style: AppStyles.subtitleBold)),
                   ],
                 ),
               ],

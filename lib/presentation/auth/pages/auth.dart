@@ -6,7 +6,6 @@ import 'package:study_scroll/presentation/auth/pages/login.dart';
 import 'package:study_scroll/presentation/auth/pages/register.dart';
 
 class AuthPage extends StatelessWidget {
-  // Or StatefulWidget if you had other reasons
   const AuthPage({super.key});
 
   @override
@@ -20,17 +19,9 @@ class AuthPage extends StatelessWidget {
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state.mode == AuthMode.login) {
-            return LoginPage(
-              toggleAuthMode: () {
-                context.read<AuthCubit>().toggleAuthMode();
-              },
-            );
+            return LoginPage(toggleAuthMode: () => context.read<AuthCubit>().toggleAuthMode());
           } else {
-            return RegisterPage(
-              toggleAuthMode: () {
-                context.read<AuthCubit>().toggleAuthMode();
-              },
-            );
+            return RegisterPage(toggleAuthMode: () => context.read<AuthCubit>().toggleAuthMode());
           }
         },
       ),

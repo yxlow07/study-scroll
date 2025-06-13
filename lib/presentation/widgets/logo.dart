@@ -10,7 +10,7 @@ class Logo extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(100.0),
-      child: Image(image: AssetImage(images.logo), width: size, height: size),
+      child: Image(image: AssetImage(Images.logo), width: size, height: size),
     );
   }
 }
