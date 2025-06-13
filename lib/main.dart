@@ -3,22 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:study_scroll/app.dart';
+import 'package:study_scroll/core/config/firebase_options.dart';
+import 'package:study_scroll/core/theme/AppTheme.dart';
 import 'package:study_scroll/data/datasource/backblaze_api.dart';
-import 'package:study_scroll/data/repositories/backblaze_storage_repo.dart';
 import 'package:study_scroll/data/repositories/fb_auth_repo.dart';
 import 'package:study_scroll/data/repositories/fb_profile_repo.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
+import 'package:study_scroll/presentation/home/bloc/ThemeCubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_pic_cubit.dart';
 
-import 'firebase_options.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   // ENV
   await dotenv.load(fileName: '.env');
 
@@ -29,13 +27,10 @@ void main() async {
     applicationKey: dotenv.env['BACKBLAZE_APPLICATION_KEY']!,
   );
 
-  print(backblazeApi.toString());
-
-  // final storageRepo = BackblazeStorageRepo(backBlazeApi: backblazeApi);
-
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => ThemeCubit(AppTheme.darkTheme)),
         BlocProvider(create: (context) => AuthCubit(authRepository: authRepo)..checkAuthStatus()),
         BlocProvider(create: (context) => ProfileCubit(profileRepo: profileRepo, backblazeApi: backblazeApi)),
         BlocProvider(create: (context) => ProfilePicCubit(backblazeApi: backblazeApi, profileRepo: profileRepo)),

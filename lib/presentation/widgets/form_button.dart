@@ -11,14 +11,16 @@ class FormButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
-      child:
-          isLoading
-              ? CircularProgressIndicator(color: Colors.white)
-              : Text(text, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       style: ElevatedButton.styleFrom(
         minimumSize: Size(double.infinity, 50),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
+      child:
+          isLoading
+              ? CircularProgressIndicator(color: Colors.grey[300])
+              : Text(text, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 }

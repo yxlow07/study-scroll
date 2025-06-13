@@ -62,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Image(image: AssetImage(images.logo), width: 100, height: 100),
                 ),
                 const SizedBox(height: 20),
-                const Text('Create An Account', style: AppStyles.title),
+                Text('Create An Account', style: AppStyles.title(context)),
                 const SizedBox(height: 10),
                 InputField(label: "Email", controller: emailController),
                 const SizedBox(height: 10),

@@ -18,6 +18,7 @@ class AuthLoading extends AuthState {
 }
 
 class AuthSignedIn extends AuthState {
+  @override
   final Student student;
 
   AuthSignedIn(this.student) : super(AuthMode.login);

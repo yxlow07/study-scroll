@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,6 @@ import 'package:study_scroll/data/datasource/a_level_subjects.dart';
 import 'package:study_scroll/domain/entities/profile.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
-import 'dart:convert';
 
 class ProfileEditPage extends StatefulWidget {
   final String uid;
@@ -25,7 +26,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   late TextEditingController _nameController;
   late TextEditingController _bioController;
 
-  List<String> availableSubjects = cambridge_official_subject_list;
+  List<String> availableSubjects = cambridgeOfficialSubjectList;
   List<String> selectedSubjects = [];
 
   @override
@@ -49,10 +50,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         enableMultipleSelection: false,
         bottomSheetTitle: const Text('Choose a subject'),
         onSelected: (List<dynamic> selectedList) {
-          if (selectedList.isNotEmpty &&
-              selectedList.first is SelectedListItem<String>) {
-            final selected =
-                (selectedList.first as SelectedListItem<String>).data;
+          if (selectedList.isNotEmpty && selectedList.first is SelectedListItem<String>) {
+            final selected = (selectedList.first as SelectedListItem<String>).data;
             setState(() {
               selectedSubjects.add(selected);
             });
@@ -88,19 +87,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return BlocListener<ProfileCubit, ProfileState>(
       listener: (context, state) {
         if (state is ProfileError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${state.message}'),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: ${state.message}'), duration: const Duration(seconds: 2)));
         }
         if (state is ProfileUpdateSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile updated successfully!'),
-              duration: Duration(seconds: 2),
-            ),
+            const SnackBar(content: Text('Profile updated successfully!'), duration: Duration(seconds: 2)),
           );
           profileCubit.loadProfile(widget.uid);
         }
@@ -143,42 +136,28 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.grey[400]!,
-                            width: 3,
-                          ),
+                          border: Border.all(color: Colors.grey[400]!, width: 3),
                         ),
                         child: Stack(
                           children: [
                             FutureBuilder<String>(
                               future:
                                   profile.profilePictureUrl.isNotEmpty
-                                      ? _getProfilePictureUrl(
-                                        profile.profilePictureUrl,
-                                      )
+                                      ? _getProfilePictureUrl(profile.profilePictureUrl)
                                       : Future.value(''),
                               builder: (context, asyncSnapshot) {
-                                if (asyncSnapshot.connectionState ==
-                                    ConnectionState.waiting) {
+                                if (asyncSnapshot.connectionState == ConnectionState.waiting) {
                                   return CircleAvatar(
                                     radius: 45,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.grey[400],
-                                    ),
+                                    child: CircularProgressIndicator(color: Colors.grey[400]),
                                   );
-                                } else if (asyncSnapshot.hasData &&
-                                    asyncSnapshot.data!.isNotEmpty) {
+                                } else if (asyncSnapshot.hasData && asyncSnapshot.data!.isNotEmpty) {
                                   return CircleAvatar(
                                     radius: 45,
-                                    backgroundImage: MemoryImage(
-                                      base64Decode(asyncSnapshot.data!),
-                                    ),
+                                    backgroundImage: MemoryImage(base64Decode(asyncSnapshot.data!)),
                                   );
                                 } else {
-                                  return CircleAvatar(
-                                    radius: 45,
-                                    child: Icon(Icons.person, size: 45),
-                                  );
+                                  return CircleAvatar(radius: 45, child: Icon(Icons.person, size: 45));
                                 }
                               },
                             ),
@@ -187,22 +166,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                               right: 0,
                               child: GestureDetector(
                                 onTap: () {
-                                  context.push(
-                                    AppRoutes.editProfilePicture,
-                                    extra: widget.uid,
-                                  );
+                                  context.push(AppRoutes.editProfilePicture, extra: widget.uid);
                                 },
                                 child: CircleAvatar(
                                   radius: 20,
-                                  backgroundColor:
-                                      AppColors
-                                          .primaryColor, // Customize the color
+                                  backgroundColor: AppColors.primaryColor, // Customize the color
                                   child: const Icon(
                                     Icons.edit,
                                     size: 24,
-                                    color:
-                                        Colors
-                                            .white, // Customize the icon color
+                                    color: Colors.white, // Customize the icon color
                                   ),
                                 ),
                               ),
@@ -216,38 +188,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         labelText: 'Name',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
                         prefixIcon: const Icon(Icons.person_outline),
                       ),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 20),
-                    Text(
-                      'Email:',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    ),
+                    Text('Email:', style: TextStyle(fontSize: 14, color: Colors.grey[600])),
                     SizedBox(height: 5),
-                    Text(
-                      profile.email,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
+                    Text(profile.email, style: const TextStyle(fontSize: 16, color: Colors.black87)),
                     SizedBox(height: 20),
                     TextFormField(
                       controller: _bioController,
                       decoration: InputDecoration(
                         labelText: 'Bio',
                         hintText: 'Tell us a little about yourself...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
                         prefixIcon: const Icon(Icons.info_outline),
                       ),
                       style: const TextStyle(fontSize: 16),
@@ -255,11 +211,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     const SizedBox(height: 20),
                     Text(
                       'Subjects:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
-                      ),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[800]),
                     ),
                     const SizedBox(height: 10),
                     // Subject Pills

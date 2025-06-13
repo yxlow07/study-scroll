@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
+import 'package:study_scroll/presentation/home/bloc/ThemeCubit.dart';
 import 'package:study_scroll/presentation/widgets/form_button.dart';
 import 'package:study_scroll/presentation/widgets/input_field.dart';
 import 'package:study_scroll/presentation/widgets/logo.dart';
@@ -41,6 +42,16 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.light_mode),
+            onPressed: () {
+              context.read<ThemeCubit>().toggleTheme();
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -50,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Logo(),
                 const SizedBox(height: 20),
-                const Text('Login', style: AppStyles.title),
+                Text('Login', style: AppStyles.title(context)),
                 const SizedBox(height: 10),
                 InputField(label: "Email", controller: emailController),
                 const SizedBox(height: 10),

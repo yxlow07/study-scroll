@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '/core/theme/AppColors.dart';
 
 class AppTheme {
@@ -17,6 +18,16 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.surface,
   );
 
-  // TODO: Implement dark theme
-  static ThemeData darkTheme = ThemeData(primaryColor: AppColors.primaryColor, brightness: Brightness.dark);
+  static ThemeData darkTheme = ThemeData(
+    primaryColor: AppColors.primaryDarkColor,
+    brightness: Brightness.dark,
+    colorScheme: ColorScheme.dark(
+      primary: AppColors.primaryDarkColor,
+      secondary: AppColors.secondaryDarkColor,
+      tertiary: AppColors.tertiaryDarkColor,
+      surface: AppColors.surfaceDark,
+      inverseSurface: AppColors.lightDarkColor,
+    ),
+    scaffoldBackgroundColor: AppColors.surfaceDark,
+  );
 }

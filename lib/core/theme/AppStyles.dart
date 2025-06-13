@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import 'AppColors.dart';
 
 class AppStyles {
-  static const TextStyle title = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textColor);
+  static Color textColor(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    return isDarkMode ? AppColors.lightDarkColor : AppColors.textColor;
+  }
+
+  static TextStyle title(BuildContext context) =>
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: textColor(context));
 
   static const TextStyle subtitle = TextStyle(fontSize: 18, color: AppColors.textLightColor);
 
@@ -13,11 +19,13 @@ class AppStyles {
     color: AppColors.textLightColor,
   );
 
-  static const TextStyle body = TextStyle(fontSize: 16, color: AppColors.textColor);
+  static TextStyle body(BuildContext context) => TextStyle(fontSize: 16, color: textColor(context));
 
-  static const TextStyle bodyBold = TextStyle(fontSize: 16, color: AppColors.textColor, fontWeight: FontWeight.bold);
+  static TextStyle bodyBold(BuildContext context) =>
+      TextStyle(fontSize: 16, color: textColor(context), fontWeight: FontWeight.bold);
 
-  static const TextStyle button = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textColor);
+  static TextStyle button(BuildContext context) =>
+      TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor(context));
 
   static const TextStyle hint = TextStyle(fontSize: 12, color: AppColors.grey);
 

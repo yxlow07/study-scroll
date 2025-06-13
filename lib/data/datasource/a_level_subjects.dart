@@ -1,4 +1,4 @@
-List<String> cambridge_official_subject_list = [
+List<String> cambridgeOfficialSubjectList = [
   "Accounting - 9706",
   "Afrikaans - Language - 8679",
   "Arabic - 9680",
