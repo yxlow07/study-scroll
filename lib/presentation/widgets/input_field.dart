@@ -6,8 +6,7 @@ class InputField extends StatelessWidget {
   final bool isPassword;
   final String? Function(String?)? validator;
 
-  const InputField({Key? key, required this.label, required this.controller, this.isPassword = false, this.validator})
-    : super(key: key);
+  const InputField({super.key, required this.label, required this.controller, this.isPassword = false, this.validator});
 
   @override
   Widget build(BuildContext context) {

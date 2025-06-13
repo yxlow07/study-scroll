@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:study_scroll/data/datasource/backblaze_api.dart';
@@ -8,33 +10,43 @@ class ProfilePicCubit extends Cubit<ProfilePicState> {
   final BackBlazeApi backblazeApi;
   final ProfileRepo profileRepo;
   final ImagePicker _picker = ImagePicker();
+  File? _pickedFile;
 
   ProfilePicCubit({required this.backblazeApi, required this.profileRepo}) : super(ProfilePicInitial());
 
-  Future<void> pickAndUploadFile(String bucketId, String uid) async {
-    emit(ProfilePicLoading());
+  Future<void> pickFile() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-      );
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        final fileData = await pickedFile.readAsBytes();
-        final mimeType = 'image/jpeg';
-        String? fileId = await backblazeApi.uploadFile(
-          bucketId,
-          pickedFile.name,
-          mimeType,
-          fileData,
-        );
-        if (fileId == null) {
-          emit(ProfilePicError('Failed to upload file'));
-          return;
-        }
-        await profileRepo.updateProfilePicture(uid, fileId);
-        emit(ProfilePicUpdateSuccess(fileId));
+        _pickedFile = File(pickedFile.path);
+        emit(ProfilePicFilePicked(_pickedFile!));
       } else {
         emit(ProfilePicError('No file selected'));
       }
+    } catch (e) {
+      emit(ProfilePicError(e.toString()));
+    }
+  }
+
+  Future<void> uploadFile(String bucketId, String uid) async {
+    if (_pickedFile == null) {
+      emit(ProfilePicError('No file picked'));
+      return;
+    }
+
+    emit(ProfilePicLoading());
+
+    try {
+      final fileData = await _pickedFile!.readAsBytes();
+      final mimeType = 'image/jpeg';
+      String? fileId = await backblazeApi.uploadFile(bucketId, uid, mimeType, fileData);
+      if (fileId == null) {
+        emit(ProfilePicError('BackBlaze upload failed'));
+        return;
+      }
+      await profileRepo.updateProfilePicture(uid, fileId);
+      emit(ProfilePicUpdateSuccess(fileId));
+      _pickedFile = null;
     } catch (e) {
       emit(ProfilePicError(e.toString()));
     }

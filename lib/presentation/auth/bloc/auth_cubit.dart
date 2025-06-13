@@ -15,8 +15,6 @@ class AuthCubit extends Cubit<AuthState> {
     final currentState = state;
     if (currentState is AuthSignedOut || currentState is AuthInitial || currentState is AuthError) {
       final newMode = currentState.mode == AuthMode.login ? AuthMode.signUp : AuthMode.login;
-      // If an error occurred, we want to clear the error visually when toggling
-      // So, we emit AuthInitial or AuthSignedOut rather than re-emitting AuthError with just a new mode.
       if (state is AuthSignedOut) {
         emit(AuthSignedOut(currentMode: newMode));
       } else {
@@ -42,6 +40,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signIn(String email, String password) async {
     final currentMode = state.mode;
     emit(AuthLoading(currentMode: currentMode));
+
     try {
       final student = await authRepository.signInWithEmailAndPassword(email, password);
       _student = student;
@@ -54,12 +53,13 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signUp(String email, String password, String name) async {
     final currentMode = state.mode;
     emit(AuthLoading(currentMode: currentMode));
+
     try {
       _student = await authRepository.signUpWithEmailAndPassword(email, password, name);
       if (_student != null) {
         emit(AuthSignedIn(_student!));
       } else {
-        emit(AuthSignedOut());
+        emit(AuthError('Failed to sign up', currentMode: currentMode));
       }
     } catch (e) {
       emit(AuthError('Failed to sign up: $e', currentMode: currentMode));
@@ -69,6 +69,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signOut() async {
     final currentMode = state.mode;
     emit(AuthLoading(currentMode: currentMode));
+
     try {
       await authRepository.signOut();
       _student = null;

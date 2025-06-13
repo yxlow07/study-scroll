@@ -7,14 +7,32 @@ import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepo profileRepo;
   final BackBlazeApi backblazeApi;
+
+  String? _currentProfilePictureBase64;
+
   ProfileCubit({required this.backblazeApi, required this.profileRepo}) : super(ProfileInitial());
+
+  Future<String> _getProfilePictureUrl(String fileId) async {
+    return backblazeApi.getDownloadUrl(fileId);
+  }
 
   Future<void> loadProfile(String uid) async {
     try {
       emit(ProfileLoading());
       final profile = await profileRepo.getProfile(uid);
       if (profile != null) {
-        emit(ProfileLoaded(profile));
+        String? imageBase64;
+
+        if (profile.profilePictureUrl.isNotEmpty) {
+          if (_currentProfilePictureBase64 != null) {
+            imageBase64 = _currentProfilePictureBase64;
+          } else {
+            imageBase64 = await _getProfilePictureUrl(profile.profilePictureUrl);
+            _currentProfilePictureBase64 = imageBase64;
+          }
+        }
+
+        emit(ProfileLoaded(profile, profilePictureBase64: _currentProfilePictureBase64));
       } else {
         emit(ProfileError('Profile not found'));
       }
@@ -50,5 +68,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     } catch (e) {
       emit(ProfileError(e.toString()));
     }
+  }
+
+  void clearProfileCache() {
+    _currentProfilePictureBase64 = null;
+    emit(ProfileInitial());
   }
 }

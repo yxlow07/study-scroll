@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +8,6 @@ import 'package:study_scroll/core/theme/AppStyles.dart';
 import 'package:study_scroll/presentation/auth/bloc/auth_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
-import 'dart:convert';
 
 class ProfileViewPage extends StatefulWidget {
   final String uid;
@@ -31,21 +32,10 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          count,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        Text(count, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         Text(label, style: const TextStyle(fontSize: 13, color: Colors.grey)),
       ],
     );
-  }
-
-  Future<String> _getProfilePictureUrl(String fileId) async {
-    final profile = context.read<ProfileCubit>();
-    if (profile.state is ProfileLoaded) {
-      return profile.backblazeApi.getDownloadUrl(fileId);
-    }
-    return '';
   }
 
   @override
@@ -56,12 +46,13 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ProfileLoaded) {
           final profile = state.profile;
+          final profilePictureBase64 = state.profilePictureBase64;
+
+          print(profilePictureBase64);
+
           List<Widget> subjectChips =
               profile.subjects.map((subject) {
-                String shortLabel =
-                    subject.length >= 4
-                        ? subject.substring(subject.length - 4)
-                        : subject;
+                String shortLabel = subject.length >= 4 ? subject.substring(subject.length - 4) : subject;
                 return Chip(label: Text(shortLabel));
               }).toList();
 
@@ -78,42 +69,19 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                       Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.grey[400]!,
-                            width: 3,
-                          ),
+                          border: Border.all(color: Colors.grey[400]!, width: 3),
                         ),
-                        child: FutureBuilder<String>(
-                          future:
-                              profile.profilePictureUrl.isNotEmpty
-                                  ? _getProfilePictureUrl(
-                                    profile.profilePictureUrl,
-                                  )
-                                  : Future.value(''),
-                          builder: (context, asyncSnapshot) {
-                            if (asyncSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircleAvatar(
-                                radius: 45,
-                                child: CircularProgressIndicator(
-                                  color: Colors.grey[400],
-                                ),
-                              );
-                            } else if (asyncSnapshot.hasData &&
-                                asyncSnapshot.data!.isNotEmpty) {
-                              return CircleAvatar(
-                                radius: 45,
-                                backgroundImage: MemoryImage(
-                                  base64Decode(asyncSnapshot.data!),
-                                ),
-                              );
-                            } else {
-                              return CircleAvatar(
-                                radius: 45,
-                                child: Icon(Icons.person, size: 45),
-                              );
-                            }
-                          },
+                        child: CircleAvatar(
+                          radius: 45,
+                          // Use the Base64 data directly
+                          backgroundImage:
+                              (profilePictureBase64 != null && profilePictureBase64.isNotEmpty)
+                                  ? MemoryImage(base64Decode(profilePictureBase64))
+                                  : null, // Or a default asset image
+                          child:
+                              (profilePictureBase64 == null || profilePictureBase64.isEmpty)
+                                  ? Icon(Icons.person, size: 45, color: Colors.grey[700])
+                                  : null,
                         ),
                       ),
                       const SizedBox(width: 20),
@@ -135,9 +103,7 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                               children: [
                                 Expanded(
                                   child: OutlinedButton(
-                                    onPressed:
-                                        () =>
-                                            context.push(AppRoutes.editProfile),
+                                    onPressed: () => context.push(AppRoutes.editProfile),
                                     style: AppStyles.outlinedButtonStyle,
                                     child: const Text('Edit Profile'),
                                   ),
@@ -145,9 +111,7 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: OutlinedButton(
-                                    onPressed:
-                                        () =>
-                                            context.read<AuthCubit>().signOut(),
+                                    onPressed: () => context.read<AuthCubit>().signOut(),
                                     style: AppStyles.outlinedButtonStyle,
                                     child: const Text('Logout'),
                                   ),
@@ -162,16 +126,10 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                   const SizedBox(height: 20),
                   Text(
                     profile.name.isNotEmpty ? profile.name : '-',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    profile.bio.isNotEmpty ? profile.bio : '',
-                    style: const TextStyle(fontSize: 14),
-                  ),
+                  Text(profile.bio.isNotEmpty ? profile.bio : '', style: const TextStyle(fontSize: 14)),
                   const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
@@ -179,12 +137,7 @@ class _ProfileViewPageState extends State<ProfileViewPage> {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children:
                         subjectChips.isEmpty
-                            ? [
-                              Text(
-                                'No subjects selected.',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ]
+                            ? [Text('No subjects selected.', style: TextStyle(color: Colors.grey[600]))]
                             : subjectChips,
                   ),
                   const SizedBox(height: 4),

@@ -47,27 +47,32 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AuthAppBar(title: 'Login'),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Logo(),
-            const SizedBox(height: 20),
-            Text('Login', style: AppStyles.title(context)),
-            const SizedBox(height: 10),
-            InputField(label: "Email", controller: emailController),
-            const SizedBox(height: 10),
-            InputField(label: "Password", controller: passwordController, isPassword: true),
-            const SizedBox(height: 20),
-            FormButton(text: "Login", onPressed: login),
-            const SizedBox(height: 10),
-            Row(
+        child: SingleChildScrollView(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Don't have an account? ", style: AppStyles.subtitle),
-                Link(onTap: widget.toggleAuthMode, child: Text("Sign Up", style: AppStyles.subtitleBold)),
+                Logo(),
+                const SizedBox(height: 20),
+                Text('Login', style: AppStyles.title(context)),
+                const SizedBox(height: 10),
+                InputField(label: "Email", controller: emailController),
+                const SizedBox(height: 10),
+                InputField(label: "Password", controller: passwordController, isPassword: true),
+                const SizedBox(height: 20),
+                FormButton(text: "Login", onPressed: login),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account? ", style: AppStyles.subtitle),
+                    Link(onTap: widget.toggleAuthMode, child: Text("Sign Up", style: AppStyles.subtitleBold)),
+                  ],
+                ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

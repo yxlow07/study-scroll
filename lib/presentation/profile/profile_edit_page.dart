@@ -12,6 +12,7 @@ import 'package:study_scroll/data/datasource/a_level_subjects.dart';
 import 'package:study_scroll/domain/entities/profile.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_cubit.dart';
 import 'package:study_scroll/presentation/profile/bloc/profile_state.dart';
+import 'package:study_scroll/presentation/widgets/alert.dart';
 
 class ProfileEditPage extends StatefulWidget {
   final String uid;
@@ -74,22 +75,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     super.dispose();
   }
 
-  Future<String> _getProfilePictureUrl(String fileId) async {
-    final profile = context.read<ProfileCubit>();
-    if (profile.state is ProfileLoaded) {
-      return profile.backblazeApi.getDownloadUrl(fileId);
-    }
-    return '';
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProfileCubit, ProfileState>(
       listener: (context, state) {
         if (state is ProfileError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Error: ${state.message}'), duration: const Duration(seconds: 2)));
+          Alert.alert(context, "Error: $state.message");
         }
         if (state is ProfileUpdateSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -116,6 +107,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
             _nameController.text = profile.name;
             _bioController.text = profile.bio;
+            late final profilePictureBase64;
+
+            if (state is ProfileLoaded) {
+              profilePictureBase64 = state.profilePictureBase64;
+            } else if (state is ProfileUpdateSuccess) {
+              profilePictureBase64 = null;
+            }
 
             List<Widget> subjectChips =
                 selectedSubjects.map((subject) {
@@ -140,26 +138,23 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         ),
                         child: Stack(
                           children: [
-                            FutureBuilder<String>(
-                              future:
-                                  profile.profilePictureUrl.isNotEmpty
-                                      ? _getProfilePictureUrl(profile.profilePictureUrl)
-                                      : Future.value(''),
-                              builder: (context, asyncSnapshot) {
-                                if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-                                  return CircleAvatar(
-                                    radius: 45,
-                                    child: CircularProgressIndicator(color: Colors.grey[400]),
-                                  );
-                                } else if (asyncSnapshot.hasData && asyncSnapshot.data!.isNotEmpty) {
-                                  return CircleAvatar(
-                                    radius: 45,
-                                    backgroundImage: MemoryImage(base64Decode(asyncSnapshot.data!)),
-                                  );
-                                } else {
-                                  return CircleAvatar(radius: 45, child: Icon(Icons.person, size: 45));
-                                }
-                              },
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.grey[400]!, width: 3),
+                              ),
+                              child: CircleAvatar(
+                                radius: 45,
+                                // Use the Base64 data directly
+                                backgroundImage:
+                                    (profilePictureBase64 != null && profilePictureBase64.isNotEmpty)
+                                        ? MemoryImage(base64Decode(profilePictureBase64))
+                                        : null, // Or a default asset image
+                                child:
+                                    (profilePictureBase64 == null || profilePictureBase64.isEmpty)
+                                        ? Icon(Icons.person, size: 45, color: Colors.grey[700])
+                                        : null,
+                              ),
                             ),
                             Positioned(
                               bottom: 0,

@@ -8,7 +8,18 @@ class ProfileLoading extends ProfileState {}
 
 class ProfileLoaded extends ProfileState {
   final Profile profile;
-  ProfileLoaded(this.profile);
+  final String? profilePictureBase64;
+
+  ProfileLoaded(this.profile, {this.profilePictureBase64});
+
+  ProfileLoaded copyWith({Profile? profile, String? profilePictureBase64}) {
+    return ProfileLoaded(
+      profile ?? this.profile,
+      profilePictureBase64: profilePictureBase64 ?? this.profilePictureBase64,
+    );
+  }
+
+  List<Object> get props => [profile, profilePictureBase64 ?? ''];
 }
 
 class ProfileUpdateSuccess extends ProfileState {
